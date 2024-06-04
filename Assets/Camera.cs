@@ -15,6 +15,6 @@ public class Camera : MonoBehaviour
     void Update()
     {
         transform.position = car.transform.position + new Vector3(0, 3, -12);
-
+        
     }
 }
