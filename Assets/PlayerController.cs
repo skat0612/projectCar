@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float speed = 10;
-    private float horInput;
-    private float verInput;
-    public float turnSpeed = 25;
+    public List<AxleInfo> axleInfos;
+    public float maxMotorTorque;
+    public float maxBrakeTorque;
+    public float maxStreeringAngle;
     // Start is called before the first frame update
     void Start()
     {
@@ -15,12 +15,64 @@ public class PlayerController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        horInput = Input.GetAxis("Horizontal");
-        verInput = Input.GetAxis("Vertical");
+        float motor = maxMotorTorque * Input.GetAxis("Vertical");
+        float steering = maxStreeringAngle * Input.GetAxis("Horizontal");
+        
+        foreach (AxleInfo axleInfo in axleInfos)
+        {
+            if (axleInfo.steering == true)
+            {
+                axleInfo.leftWheel.steerAngle = steering;
+                axleInfo.rightWheel.steerAngle = steering;
+            }
 
-        transform.Translate(Vector3.forward * speed * Time.deltaTime * verInput);
-        transform.Rotate(Vector3.up * turnSpeed * Time.deltaTime * horInput);
+            if (axleInfo.motor == true)
+            {
+                axleInfo.leftWheel.motorTorque = motor;
+                axleInfo.rightWheel.motorTorque = motor;
+            }
+
+            if (Input.GetKey(KeyCode.Space))
+            {
+                axleInfo.leftWheel.brakeTorque = maxBrakeTorque;
+                axleInfo.rightWheel.brakeTorque = maxBrakeTorque;
+            }
+            else
+            {
+                axleInfo.leftWheel.brakeTorque = 0;
+                axleInfo.rightWheel.brakeTorque = 0;
+            }
+
+            ApplyLocalPositionToVisuals(axleInfo.leftWheel);
+            ApplyLocalPositionToVisuals(axleInfo.rightWheel);
+
+
+
+        }
+
+
     }
+
+    public void ApplyLocalPositionToVisuals(WheelCollider wheelCollider)
+    {
+        if (wheelCollider.transform.childCount == 0)
+        {
+            return;
+        }
+
+        Transform visualWheel = wheelCollider.transform.GetChild(0);
+
+        Vector3 position;
+        Quaternion rotation;
+        wheelCollider.GetWorldPose(out position, out rotation);
+
+        visualWheel.transform.position = position;
+        visualWheel.transform.rotation = rotation;
+    }
+
+
+
+
 }
