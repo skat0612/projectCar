@@ -8,10 +8,11 @@ public class PlayerController : MonoBehaviour
     public float maxMotorTorque;
     public float maxBrakeTorque;
     public float maxStreeringAngle;
+    public Vector3 ñenterOfMass;
     // Start is called before the first frame update
     void Start()
     {
-        
+        GetComponent<Rigidbody>().centerOfMass = ñenterOfMass;
     }
 
     // Update is called once per frame

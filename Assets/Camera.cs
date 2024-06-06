@@ -14,7 +14,7 @@ public class Camera : MonoBehaviour
     }
 
     // Update is called once per frame
-    void LateUpdate()
+    void FixedUpdate()
     {
         transform.LookAt(car.transform);
         float distanceToMove = Mathf.Abs(Vector3.Distance(transform.position, empty.transform.position) * speed);
